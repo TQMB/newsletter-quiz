@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Banking Newsletter Quiz</title>
+    <style>
+        /* [Your existing CSS from the prompt goes here - it's excellent!] */
+        /* I've copied it below for completeness */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .quiz-container { background: white; border-radius: 20px; padding: 30px 40px; max-width: 800px; width: 100%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
+        .quiz-header { text-align: center; margin-bottom: 30px; }
+        .quiz-title { font-size: 2.2em; color: #2c3e50; margin-bottom: 10px; font-weight: 700; }
+        .quiz-subtitle { font-size: 1.1em; color: #7f8c8d; margin-bottom: 20px; }
+        .progress-bar { width: 100%; height: 8px; background: #ecf0f1; border-radius: 4px; overflow: hidden; margin-bottom: 30px; }
+        .progress-fill { height: 100%; background: linear-gradient(45deg, #3498db, #2ecc71); transition: width 0.3s ease; border-radius: 4px; }
+        .question-container { margin-bottom: 30px; }
+        .question { font-size: 1.3em; color: #2c3e50; margin-bottom: 20px; font-weight: 600; line-height: 1.4; }
+        .options { display: grid; gap: 15px; }
+        .option { padding: 18px 25px; border: 2px solid #ecf0f1; border-radius: 15px; cursor: pointer; transition: all 0.3s ease; background: white; font-size: 1.1em; }
+        .option:hover { border-color: #3498db; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(52, 152, 219, 0.2); }
+        .option.selected { border-color: #3498db; background: #3498db; color: white; }
+        .option.correct { border-color: #2ecc71; background: #2ecc71; color: white; animation: pulse 0.6s ease-in-out; }
+        .option.incorrect { border-color: #e74c3c; background: #e74c3c; color: white; animation: shake 0.5s ease-in-out; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .btn { background: #3498db; color: white; border: none; padding: 15px 30px; font-size: 1.1em; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; font-weight: 600; text-transform: uppercase; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4); }
+        .btn:disabled { background: #bdc3c7; cursor: not-allowed; transform: none; box-shadow: none; }
+        .results-container { text-align: center; }
+        .final-score { font-size: 3em; font-weight: 700; margin-bottom: 10px; color: #2c3e50; }
+        .score-text { font-size: 1.3em; margin-bottom: 20px; color: #7f8c8d; }
+        .name-input-section { margin-top: 20px; }
+        .name-input { padding: 12px 20px; border: 2px solid #ecf0f1; border-radius: 25px; font-size: 1em; width: 250px; margin-right: 10px; text-align: center; }
+        .submit-score-btn, .leaderboard-toggle, .share-btn, .restart-btn { margin: 5px; padding: 12px 25px; }
+        .leaderboard { margin-top: 30px; }
+        .leaderboard h3 { color: #2c3e50; margin-bottom: 20px; font-size: 1.5em; text-align: center; }
+        .leaderboard-entry { display: flex; align-items: center; padding: 15px; margin-bottom: 10px; border-radius: 10px; background: #f8f9fa; border-left: 4px solid #3498db; }
+        .leaderboard-entry.top-1 { background: #f1c40f; color: white; border-left-color: #f39c12; }
+        .leaderboard-rank { font-weight: 700; width: 40px; }
+        .leaderboard-name { flex: 1; font-weight: 600; margin-left: 15px; }
+        .leaderboard-score { font-weight: 700; }
+        .hidden { display: none; }
+        .explanation { margin-top: 15px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 10px; font-size: 0.95em; color: #2c3e50; border-left: 4px solid #3498db; text-align: left;}
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="quiz-section">
+            <div class="quiz-header">
+                <h1 class="quiz-title">Digital Banking Quiz</h1>
+                <p class="quiz-subtitle" id="quiz-id-display">Week of 07 Jul, 2025</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+            <div class="question-container">
+                <div class="question" id="question-text"></div>
+                <div class="options" id="options-container"></div>
+                <div class="explanation hidden" id="explanation"></div>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" id="next-btn" disabled>Submit Answer</button>
+            </div>
+        </div>
+
+        <div id="results-section" class="results-container hidden">
+            <h2 class="quiz-title">Quiz Complete!</h2>
+            <div class="final-score" id="final-score"></div>
+            <p class="score-text" id="score-text"></p>
+            <div class="name-input-section" id="name-input-section">
+                <input type="text" id="player-name" class="name-input" placeholder="Enter your name" maxlength="20">
+                <button class="btn submit-score-btn" id="submit-score-btn">Submit to Leaderboard</button>
+            </div>
+            <div>
+                <button class="btn restart-btn" id="restart-btn">Try Again</button>
+                <button class="btn leaderboard-toggle" id="leaderboard-toggle">🏆 View Leaderboard</button>
+            </div>
+        </div>
+
+        <div id="leaderboard-section" class="leaderboard hidden">
+             <h3>🏆 This Week's Leaderboard</h3>
+             <div id="leaderboard-entries"></div>
+             <div style="text-align: center; margin-top: 20px;">
+                <button class="btn leaderboard-toggle" id="leaderboard-back-btn">Back to Results</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const API_URL = 'https://script.google.com/macros/s/AKfycby2akJUE6_FppvfjnCTlbpP6ElwuHvNuG7pbIgYn85kTLRL8aXB_6jp-sDbwgojlnUihQ/exec'; // IMPORTANT!
+        const QUIZ_ID = '2025-07-07'; // Change this for each new weekly quiz
+
+        // --- QUIZ DATA ---
+        const questions = [
+            {
+                question: "Which payment networks did PayNet partner with to boost tourist spending in Malaysia?",
+                options: ["Visa and Mastercard", "Alipay+ and Weixin Pay", "UnionPay and JCB", "PayPal and Stripe"],
+                correct: 1,
+                explanation: "PayNet partnered with Alipay+ and Weixin Pay to facilitate tourist spending in Malaysia, making it easier for international visitors to make payments."
+            },
+            {
+                question: "In just under three years, which institution became Singapore's 4th largest bank?",
+                options: ["DBS Bank", "UOB", "Trust Bank", "OCBC Bank"],
+                correct: 2,
+                explanation: "Trust Bank achieved remarkable growth, becoming Singapore's 4th largest bank in just under three years since its launch."
+            },
+            {
+                question: "Which Malaysian e-wallet now allows users to make QR payments overseas via UnionPay?",
+                options: ["TNG eWallet", "GrabPay", "Boost", "BigPay"],
+                correct: 2,
+                explanation: "Boost users can now make QR payments at Weixin Pay merchants in China and at UnionPay-accepted outlets globally."
+            },
+            {
+                question: "What is the total amount of penalties imposed by MAS on financial institutions for AML breaches?",
+                options: ["S$15.2 million", "S$27.45 million", "S$35.8 million", "S$42.1 million"],
+                correct: 1,
+                explanation: "The Monetary Authority of Singapore imposed a total of S$27.45 million in penalties on nine financial institutions for AML breaches."
+            },
+            {
+                question: "Which company is extending its First-Party Trust program to APAC to address friendly fraud?",
+                options: ["Visa", "Mastercard", "American Express", "Discover"],
+                correct: 1,
+                explanation: "Mastercard is extending its First-Party Trust program to Asia Pacific, Canada, Latin America, and the Caribbean to address friendly fraud."
+            }
+        ];
+
+        // --- STATE ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let answered = false;
+
+        // --- DOM ELEMENTS ---
+        const quizSection = document.getElementById('quiz-section');
+        const resultsSection = document.getElementById('results-section');
+        const leaderboardSection = document.getElementById('leaderboard-section');
+        
+        const quizIdDisplay = document.getElementById('quiz-id-display');
+        const progressFill = document.getElementById('progress-fill');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const explanationDiv = document.getElementById('explanation');
+        const nextBtn = document.getElementById('next-btn');
+
+        const finalScoreDisplay = document.getElementById('final-score');
+        const scoreTextDisplay = document.getElementById('score-text');
+        const nameInputSection = document.getElementById('name-input-section');
+        const playerNameInput = document.getElementById('player-name');
+        const submitScoreBtn = document.getElementById('submit-score-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const leaderboardToggleBtns = document.querySelectorAll('.leaderboard-toggle');
+        const leaderboardEntries = document.getElementById('leaderboard-entries');
+
+        // --- EVENT LISTENERS ---
+        nextBtn.addEventListener('click', handleNext);
+        submitScoreBtn.addEventListener('click', submitScore);
+        restartBtn.addEventListener('click', restartQuiz);
+        leaderboardToggleBtns.forEach(btn => btn.addEventListener('click', toggleLeaderboard));
+
+        // --- FUNCTIONS ---
+        function startQuiz() {
+            quizIdDisplay.textContent = `Week of ${QUIZ_ID}`;
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            selectedOption = null;
+            
+            quizSection.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+            leaderboardSection.classList.add('hidden');
+            nameInputSection.style.display = 'block';
+            submitScoreBtn.disabled = false;
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            questionText.textContent = `${currentQuestionIndex + 1}. ${question.question}`;
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option;
+                optionEl.dataset.index = index;
+                optionEl.addEventListener('click', () => handleOptionSelect(optionEl, index));
+                optionsContainer.appendChild(optionEl);
+            });
+
+            explanationDiv.classList.add('hidden');
+            nextBtn.disabled = true;
+            nextBtn.textContent = 'Submit Answer';
+            answered = false;
+            selectedOption = null;
+
+            updateProgress();
+        }
+
+        function handleOptionSelect(optionEl, index) {
+            if (answered) return;
+
+            document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+            optionEl.classList.add('selected');
+            selectedOption = index;
+            nextBtn.disabled = false;
+        }
+
+        function handleNext() {
+            if (answered) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                checkAnswer();
+            }
+        }
+
+        function checkAnswer() {
+            answered = true;
+            const question = questions[currentQuestionIndex];
+            const options = optionsContainer.children;
+
+            if (selectedOption === question.correct) {
+                score++;
+                options[selectedOption].classList.add('correct');
+            } else {
+                options[selectedOption].classList.add('incorrect');
+                options[question.correct].classList.add('correct');
+            }
+
+            explanationDiv.textContent = question.explanation;
+            explanationDiv.classList.remove('hidden');
+
+            nextBtn.textContent = (currentQuestionIndex === questions.length - 1) ? 'Show Results' : 'Next Question';
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            progressFill.style.width = `${progress}%`;
+        }
+        
+        function showResults() {
+            quizSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreDisplay.textContent = `${score} / ${questions.length}`;
+            
+            let message = '';
+            if (percentage >= 90) message = '🏆 Excellent! You\'re a fintech expert!';
+            else if (percentage >= 70) message = '🎉 Great job!';
+            else if (percentage >= 50) message = '👍 Good work!';
+            else message = '📚 Keep learning!';
+            scoreTextDisplay.textContent = message;
+        }
+
+        async function submitScore() {
+            const playerName = playerNameInput.value.trim();
+            if (!playerName) {
+                alert('Please enter your name.');
+                return;
+            }
+            if (API_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                alert('API URL is not configured. Cannot submit score.');
+                return;
+            }
+
+            submitScoreBtn.disabled = true;
+            submitScoreBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: playerName,
+                        score: score,
+                        quizId: QUIZ_ID
+                    })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    alert('Score submitted successfully!');
+                    nameInputSection.style.display = 'none';
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
+            } catch (error) {
+                alert(`Error submitting score: ${error.message}`);
+                submitScoreBtn.disabled = false;
+            } finally {
+                submitScoreBtn.textContent = 'Submit to Leaderboard';
+            }
+        }
+        
+        async function fetchAndDisplayLeaderboard() {
+            if (API_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                leaderboardEntries.innerHTML = '<p>Leaderboard API is not configured.</p>';
+                return;
+            }
+
+            leaderboardEntries.innerHTML = '<p>Loading leaderboard...</p>';
+            
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
+                // Filter for the current quiz and process
+                const weeklyScores = data.filter(entry => entry.quizId === QUIZ_ID);
+                const monthlyScores = data.filter(entry => entry.quizId.startsWith(QUIZ_ID.substring(0, 7)));
+
+                // Display weekly leaderboard
+                displaySingleLeaderboard("This Week's Leaderboard", weeklyScores, 'weekly');
+
+                // Display monthly leaderboard
+                displaySingleLeaderboard("This Month's Leaderboard", monthlyScores, 'monthly');
+
+            } catch (error) {
+                leaderboardEntries.innerHTML = `<p>Error loading leaderboard: ${error.message}</p>`;
+            }
+        }
+        
+        function displaySingleLeaderboard(title, scores, type) {
+            let processedScores = {};
+
+            if (type === 'monthly') {
+                scores.forEach(entry => {
+                    if (!processedScores[entry.name]) {
+                        processedScores[entry.name] = 0;
+                    }
+                    processedScores[entry.name] += entry.score;
+                });
+                scores = Object.entries(processedScores).map(([name, totalScore]) => ({name, score: totalScore}));
+            }
+            
+            scores.sort((a, b) => b.score - a.score);
+
+            const titleEl = document.createElement('h3');
+            titleEl.textContent = title;
+            leaderboardEntries.appendChild(titleEl);
+
+            if (scores.length === 0) {
+                leaderboardEntries.innerHTML += '<p>No scores yet for this period. Be the first!</p>';
+                return;
+            }
+            
+            scores.slice(0, 10).forEach((entry, index) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'leaderboard-entry';
+                if (index === 0) entryDiv.classList.add('top-1');
+                
+                entryDiv.innerHTML = `
+                    <div class="leaderboard-rank">${index + 1}</div>
+                    <div class="leaderboard-name">${entry.name}</div>
+                    <div class="leaderboard-score">${entry.score}</div>
+                `;
+                leaderboardEntries.appendChild(entryDiv);
+            });
+        }
+
+
+        function toggleLeaderboard() {
+            const isHidden = leaderboardSection.classList.contains('hidden');
+            if (isHidden) {
+                fetchAndDisplayLeaderboard();
+                resultsSection.classList.add('hidden');
+                leaderboardSection.classList.remove('hidden');
+            } else {
+                leaderboardSection.classList.add('hidden');
+                resultsSection.classList.remove('hidden');
+            }
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        // Initialize Quiz
+        startQuiz();
+    </script>
+</body>
+</html>
