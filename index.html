@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Banking Newsletter Quiz</title>
     <style>
-        /* [Your existing CSS from the prompt goes here - it's excellent!] */
-        /* I've copied it below for completeness */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .quiz-container { background: white; border-radius: 20px; padding: 30px 40px; max-width: 800px; width: 100%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
@@ -90,8 +88,8 @@
 
     <script>
         // --- CONFIGURATION ---
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwdlREWHbgY1C-n9OQusX1I0XX64haPVNJu9odbp3tSayxbh6JF2W8XdlIg4TaW2Nk9tg/exec'; // IMPORTANT!
-        const QUIZ_ID = '2025-07-07'; // Change this for each new weekly quiz
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwdlREWHbgY1C-n9OQusX1I0XX64haPVNJu9odbp3tSayxbh6JF2W8XdlIg4TaW2Nk9tg/exec';
+        const QUIZ_ID = '2025-07-07';
 
         // --- QUIZ DATA ---
         const questions = [
@@ -268,26 +266,32 @@
                 alert('Please enter your name.');
                 return;
             }
-            if (API_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
-                alert('API URL is not configured. Cannot submit score.');
-                return;
-            }
 
             submitScoreBtn.disabled = true;
             submitScoreBtn.textContent = 'Submitting...';
 
             try {
+                // Create form data for POST request
+                const formData = new FormData();
+                formData.append('name', playerName);
+                formData.append('score', score);
+                formData.append('quizId', QUIZ_ID);
+
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    mode: 'cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: playerName,
-                        score: score,
-                        quizId: QUIZ_ID
-                    })
+                    body: formData
                 });
-                const result = await response.json();
+
+                const responseText = await response.text();
+                let result;
+                
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    // If response isn't JSON, treat as error
+                    throw new Error('Invalid response from server');
+                }
+
                 if (result.status === 'success') {
                     alert('Score submitted successfully!');
                     nameInputSection.style.display = 'none';
@@ -303,20 +307,19 @@
         }
         
         async function fetchAndDisplayLeaderboard() {
-            if (API_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
-                leaderboardEntries.innerHTML = '<p>Leaderboard API is not configured.</p>';
-                return;
-            }
-
             leaderboardEntries.innerHTML = '<p>Loading leaderboard...</p>';
             
             try {
                 const response = await fetch(API_URL);
-                const data = await response.json();
+                const responseText = await response.text();
+                const data = JSON.parse(responseText);
 
                 // Filter for the current quiz and process
                 const weeklyScores = data.filter(entry => entry.quizId === QUIZ_ID);
                 const monthlyScores = data.filter(entry => entry.quizId.startsWith(QUIZ_ID.substring(0, 7)));
+
+                // Clear the loading message
+                leaderboardEntries.innerHTML = '';
 
                 // Display weekly leaderboard
                 displaySingleLeaderboard("This Week's Leaderboard", weeklyScores, 'weekly');
@@ -349,7 +352,9 @@
             leaderboardEntries.appendChild(titleEl);
 
             if (scores.length === 0) {
-                leaderboardEntries.innerHTML += '<p>No scores yet for this period. Be the first!</p>';
+                const noScoresEl = document.createElement('p');
+                noScoresEl.textContent = 'No scores yet for this period. Be the first!';
+                leaderboardEntries.appendChild(noScoresEl);
                 return;
             }
             
@@ -366,7 +371,6 @@
                 leaderboardEntries.appendChild(entryDiv);
             });
         }
-
 
         function toggleLeaderboard() {
             const isHidden = leaderboardSection.classList.contains('hidden');
