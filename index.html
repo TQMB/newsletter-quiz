@@ -78,7 +78,6 @@
         </div>
 
         <div id="leaderboard-section" class="leaderboard hidden">
-             <h3>🏆 This Week's Leaderboard</h3>
              <div id="leaderboard-entries"></div>
              <div style="text-align: center; margin-top: 20px;">
                 <button class="btn leaderboard-toggle" id="leaderboard-back-btn">Back to Results</button>
@@ -86,44 +85,14 @@
         </div>
     </div>
 
+    <script src="questions.js"></script>
     <script>
         // --- CONFIGURATION ---
         const API_URL = 'https://script.google.com/macros/s/AKfycbyHUx_QcbxKTwz6qlzXvRCKiQswEAbzt7l_YcMB1HVowAal1co5eDzhwdKImkj93MU-HQ/exec';
         const QUIZ_ID = '2025-07-07';
 
         // --- QUIZ DATA ---
-        const questions = [
-            {
-                question: "Which payment networks did PayNet partner with to boost tourist spending in Malaysia?",
-                options: ["Visa and Mastercard", "Alipay+ and Weixin Pay", "UnionPay and JCB", "PayPal and Stripe"],
-                correct: 1,
-                explanation: "PayNet partnered with Alipay+ and Weixin Pay to facilitate tourist spending in Malaysia, making it easier for international visitors to make payments."
-            },
-            {
-                question: "In just under three years, which institution became Singapore's 4th largest bank?",
-                options: ["DBS Bank", "UOB", "Trust Bank", "OCBC Bank"],
-                correct: 2,
-                explanation: "Trust Bank achieved remarkable growth, becoming Singapore's 4th largest bank in just under three years since its launch."
-            },
-            {
-                question: "Which Malaysian e-wallet now allows users to make QR payments overseas via UnionPay?",
-                options: ["TNG eWallet", "GrabPay", "Boost", "BigPay"],
-                correct: 2,
-                explanation: "Boost users can now make QR payments at Weixin Pay merchants in China and at UnionPay-accepted outlets globally."
-            },
-            {
-                question: "What is the total amount of penalties imposed by MAS on financial institutions for AML breaches?",
-                options: ["S$15.2 million", "S$27.45 million", "S$35.8 million", "S$42.1 million"],
-                correct: 1,
-                explanation: "The Monetary Authority of Singapore imposed a total of S$27.45 million in penalties on nine financial institutions for AML breaches."
-            },
-            {
-                question: "Which company is extending its First-Party Trust program to APAC to address friendly fraud?",
-                options: ["Visa", "Mastercard", "American Express", "Discover"],
-                correct: 1,
-                explanation: "Mastercard is extending its First-Party Trust program to Asia Pacific, Canada, Latin America, and the Caribbean to address friendly fraud."
-            }
-        ];
+        // The 'questions' array is now loaded from questions.js
 
         // --- STATE ---
         let currentQuestionIndex = 0;
@@ -314,18 +283,14 @@
                 const responseText = await response.text();
                 const data = JSON.parse(responseText);
 
-                // Filter for the current quiz and process
-                const weeklyScores = data.filter(entry => entry.quizId === QUIZ_ID);
+                // Filter for the current month's quizzes
                 const monthlyScores = data.filter(entry => entry.quizId.startsWith(QUIZ_ID.substring(0, 7)));
 
                 // Clear the loading message
                 leaderboardEntries.innerHTML = '';
-
-                // Display weekly leaderboard
-                displaySingleLeaderboard("This Week's Leaderboard", weeklyScores, 'weekly');
-
+                
                 // Display monthly leaderboard
-                displaySingleLeaderboard("This Month's Leaderboard", monthlyScores, 'monthly');
+                displaySingleLeaderboard("🏆 This Month's Leaderboard", monthlyScores, 'monthly');
 
             } catch (error) {
                 leaderboardEntries.innerHTML = `<p>Error loading leaderboard: ${error.message}</p>`;
@@ -335,6 +300,7 @@
         function displaySingleLeaderboard(title, scores, type) {
             let processedScores = {};
 
+            // Aggregate scores by name for the monthly leaderboard
             if (type === 'monthly') {
                 scores.forEach(entry => {
                     if (!processedScores[entry.name]) {
