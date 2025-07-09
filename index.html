@@ -48,7 +48,7 @@
         <div id="quiz-section">
             <div class="quiz-header">
                 <h1 class="quiz-title">Digital Banking Quiz</h1>
-                <p class="quiz-subtitle" id="quiz-id-display">Week of 07 Jul, 2025</p>
+                <p class="quiz-subtitle" id="quiz-id-display"></p>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
@@ -89,10 +89,9 @@
     <script>
         // --- CONFIGURATION ---
         const API_URL = 'https://script.google.com/macros/s/AKfycbyHUx_QcbxKTwz6qlzXvRCKiQswEAbzt7l_YcMB1HVowAal1co5eDzhwdKImkj93MU-HQ/exec';
-        const QUIZ_ID = '2025-07-07';
-
+        
         // --- QUIZ DATA ---
-        // The 'questions' array is now loaded from questions.js
+        // The 'QUIZ_ID' and 'questions' variables are now loaded from questions.js
 
         // --- STATE ---
         let currentQuestionIndex = 0;
@@ -129,7 +128,16 @@
 
         // --- FUNCTIONS ---
         function startQuiz() {
-            quizIdDisplay.textContent = `Week of ${QUIZ_ID}`;
+            // Check if data loaded correctly
+            if (typeof QUIZ_ID === 'undefined' || typeof questions === 'undefined') {
+                document.body.innerHTML = '<div class="quiz-container" style="text-align: center;"><h1>Error</h1><p>Could not load quiz data. Please make sure <strong>questions.js</strong> is available.</p></div>';
+                return;
+            }
+
+            const date = new Date(QUIZ_ID + 'T00:00:00');
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            quizIdDisplay.textContent = `Quiz for ${date.toLocaleDateString('en-US', options)}`;
+            
             currentQuestionIndex = 0;
             score = 0;
             answered = false;
@@ -240,26 +248,13 @@
             submitScoreBtn.textContent = 'Submitting...';
 
             try {
-                // Create form data for POST request
                 const formData = new FormData();
                 formData.append('name', playerName);
                 formData.append('score', score);
                 formData.append('quizId', QUIZ_ID);
 
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const responseText = await response.text();
-                let result;
-                
-                try {
-                    result = JSON.parse(responseText);
-                } catch (e) {
-                    // If response isn't JSON, treat as error
-                    throw new Error('Invalid response from server');
-                }
+                const response = await fetch(API_URL, { method: 'POST', body: formData });
+                const result = await response.json();
 
                 if (result.status === 'success') {
                     alert('Score submitted successfully!');
@@ -279,17 +274,12 @@
             leaderboardEntries.innerHTML = '<p>Loading leaderboard...</p>';
             
             try {
-                const response = await fetch(API_URL);
-                const responseText = await response.text();
-                const data = JSON.parse(responseText);
+                const response = await fetch(`${API_URL}?quizId=${QUIZ_ID}`);
+                const data = await response.json();
 
-                // Filter for the current month's quizzes
                 const monthlyScores = data.filter(entry => entry.quizId.startsWith(QUIZ_ID.substring(0, 7)));
 
-                // Clear the loading message
                 leaderboardEntries.innerHTML = '';
-                
-                // Display monthly leaderboard
                 displaySingleLeaderboard("🏆 This Month's Leaderboard", monthlyScores, 'monthly');
 
             } catch (error) {
@@ -300,12 +290,9 @@
         function displaySingleLeaderboard(title, scores, type) {
             let processedScores = {};
 
-            // Aggregate scores by name for the monthly leaderboard
             if (type === 'monthly') {
                 scores.forEach(entry => {
-                    if (!processedScores[entry.name]) {
-                        processedScores[entry.name] = 0;
-                    }
+                    if (!processedScores[entry.name]) processedScores[entry.name] = 0;
                     processedScores[entry.name] += entry.score;
                 });
                 scores = Object.entries(processedScores).map(([name, totalScore]) => ({name, score: totalScore}));
