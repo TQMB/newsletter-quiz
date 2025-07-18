@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -148,6 +148,7 @@
             leaderboardSection.classList.add('hidden');
             nameInputSection.style.display = 'block';
             submitScoreBtn.disabled = false;
+            playerNameInput.value = ''; // Clear name on restart
 
             loadQuestion();
         }
@@ -270,34 +271,50 @@
             }
         }
         
+        // --- MODIFIED LEADERBOARD FUNCTIONS ---
+
         async function fetchAndDisplayLeaderboard() {
             leaderboardEntries.innerHTML = '<p>Loading leaderboard...</p>';
             
             try {
+                // Fetch all scores for the current quiz
                 const response = await fetch(`${API_URL}?quizId=${QUIZ_ID}`);
-                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const allSubmissions = await response.json();
 
-                const monthlyScores = data.filter(entry => entry.quizId.startsWith(QUIZ_ID.substring(0, 7)));
+                // --- NEW LOGIC: Filter for first attempt only ---
+                // This assumes the API returns entries in chronological order (oldest first).
+                // This is the standard behavior for Google Apps Script appending to a Sheet.
+                const firstAttempts = [];
+                const seenPlayers = new Set(); // To track players we've already processed
+
+                for (const entry of allSubmissions) {
+                    // Normalize name to handle potential case differences, e.g., "John" vs "john"
+                    const normalizedName = entry.name.trim().toLowerCase();
+                    if (!seenPlayers.has(normalizedName)) {
+                        // If we haven't seen this player before, this is their first attempt.
+                        firstAttempts.push(entry);
+                        seenPlayers.add(normalizedName); // Mark this player as seen
+                    }
+                }
+                // --- END OF NEW LOGIC ---
 
                 leaderboardEntries.innerHTML = '';
-                displaySingleLeaderboard("🏆 This Month's Leaderboard", monthlyScores, 'monthly');
+                displaySingleLeaderboard(`🏆 Leaderboard for this Quiz`, firstAttempts);
 
             } catch (error) {
                 leaderboardEntries.innerHTML = `<p>Error loading leaderboard: ${error.message}</p>`;
             }
         }
         
-        function displaySingleLeaderboard(title, scores, type) {
-            let processedScores = {};
-
-            if (type === 'monthly') {
-                scores.forEach(entry => {
-                    if (!processedScores[entry.name]) processedScores[entry.name] = 0;
-                    processedScores[entry.name] += entry.score;
-                });
-                scores = Object.entries(processedScores).map(([name, totalScore]) => ({name, score: totalScore}));
-            }
-            
+        /**
+         * A simplified function to display a list of scores.
+         * It sorts the scores and displays the top 10.
+         */
+        function displaySingleLeaderboard(title, scores) {
+            // Sort scores from highest to lowest
             scores.sort((a, b) => b.score - a.score);
 
             const titleEl = document.createElement('h3');
@@ -306,11 +323,12 @@
 
             if (scores.length === 0) {
                 const noScoresEl = document.createElement('p');
-                noScoresEl.textContent = 'No scores yet for this period. Be the first!';
+                noScoresEl.textContent = 'No scores yet. Be the first!';
                 leaderboardEntries.appendChild(noScoresEl);
                 return;
             }
             
+            // Display only the top 10 scores
             scores.slice(0, 10).forEach((entry, index) => {
                 const entryDiv = document.createElement('div');
                 entryDiv.className = 'leaderboard-entry';
@@ -324,6 +342,7 @@
                 leaderboardEntries.appendChild(entryDiv);
             });
         }
+        // --- END OF MODIFIED FUNCTIONS ---
 
         function toggleLeaderboard() {
             const isHidden = leaderboardSection.classList.contains('hidden');
