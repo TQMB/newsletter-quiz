@@ -1,59 +1,59 @@
-const QUIZ_ID = '2025-07-09';
+const QUIZ_ID = '2025-07-18';
 
 const questions = [
     {
-        "question": "Payments Network Malaysia (PayNet) has partnered with which companies to boost tourist spending in Malaysia?",
+        "question": "What is the primary purpose of the partnership between TNG Digital and Kakitangan.com, as announced in the headline article?",
         "options": [
-            "Mastercard and Visa",
-            "GrabPay and Touch 'n Go",
-            "Alipay+ and Weixin Pay",
-            "UnionPay and PayPal"
-        ],
-        "correct": 2,
-        "explanation": "PayNet has partnered with Alipay+ and Weixin Pay to facilitate tourist spending."
-    },
-    {
-        "question": "What is OCBC's target amount for financing serial entrepreneurs by 2028?",
-        "options": [
-            "S$2 billion",
-            "S$3 billion",
-            "S$4 billion",
-            "S$5 billion"
-        ],
-        "correct": 3,
-        "explanation": "OCBC plans to increase its financing for serial entrepreneurs to S$5 billion by 2028."
-    },
-    {
-        "question": "Boost users can now make overseas QR payments at which types of merchants?",
-        "options": [
-            "Only UnionPay-accepted outlets in China",
-            "Weixin Pay merchants in China and UnionPay-accepted outlets globally",
-            "Only Weixin Pay merchants in China",
-            "All major e-wallet merchants in Southeast Asia"
+            "To offer discounted financial services to employees.",
+            "To enable direct salary payments into employees' TNG eWallets.",
+            "To provide micro-loans to unbanked workers.",
+            "To develop new HR management software."
         ],
         "correct": 1,
-        "explanation": "Boost users can make QR payments at Weixin Pay merchants in China and at UnionPay-accepted outlets globally."
+        "explanation": "TNG Digital has partnered with Kakitangan.com to enable salary payments directly into employees\u2019 TNG eWallet."
     },
     {
-        "question": "How much does Alibaba Cloud plan to invest this fiscal year to strengthen its global AI and cloud partnerships?",
+        "question": "What is AEON Credit Service's ownership stake in AEON Bank?",
         "options": [
-            "Over US$30 million",
-            "Over US$45 million",
-            "Over US$60 million",
-            "Over US$75 million"
+            "25 percent",
+            "50 percent",
+            "75 percent",
+            "100 percent"
         ],
-        "correct": 2,
-        "explanation": "Alibaba Cloud has announced plans to invest more than US$60 million this fiscal year."
+        "correct": 1,
+        "explanation": "AEON Bank is AEON Credit Service's 50 percent-owned digital bank."
     },
     {
-        "question": "What was the total amount of penalties imposed by the Monetary Authority of Singapore (MAS) on nine financial institutions for AML breaches?",
+        "question": "How long did it take for Moomoo Securities Malaysia to surpass one million registered users?",
         "options": [
-            "S$15.25 million",
-            "S$20.00 million",
-            "S$27.45 million",
-            "S$30.15 million"
+            "Less than six months",
+            "Just over a year",
+            "Approximately two years",
+            "Over three years"
+        ],
+        "correct": 1,
+        "explanation": "Moomoo Securities Malaysia reached one million registered users just over a year after entering the market."
+    },
+    {
+        "question": "What initiative has the Monetary Authority of Singapore (MAS) launched to help financial institutions adopt AI?",
+        "options": [
+            "A new regulatory framework",
+            "A grant program for AI startups",
+            "A Pathfinder initiative",
+            "A mandatory AI certification course"
         ],
         "correct": 2,
-        "explanation": "The Monetary Authority of Singapore (MAS) has imposed a total of S$27.45 million in penalties on nine financial institutions."
+        "explanation": "MAS has launched Pathfinder to help financial institutions adopt AI."
+    },
+    {
+        "question": "When is Tan Teck Long officially set to succeed Helen Wong as OCBC Group CEO?",
+        "options": [
+            "1 July 2025",
+            "1 January 2026",
+            "1 July 2026",
+            "1 January 2027"
+        ],
+        "correct": 1,
+        "explanation": "Tan Teck Long will succeed Helen Wong as OCBC Group CEO, effective 1 January 2026."
     }
 ];
