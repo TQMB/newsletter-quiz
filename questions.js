@@ -1,59 +1,59 @@
-const QUIZ_ID = '2025-07-18';
+const QUIZ_ID = '2025-08-01';
 
 const questions = [
     {
-        "question": "What is the primary purpose of the partnership between TNG Digital and Kakitangan.com, as announced in the headline article?",
+        "question": "What is Malaysia's Ryt Bank using Provenir's AI platform for, according to the headline?",
         "options": [
-            "To offer discounted financial services to employees.",
-            "To enable direct salary payments into employees' TNG eWallets.",
-            "To provide micro-loans to unbanked workers.",
-            "To develop new HR management software."
-        ],
-        "correct": 1,
-        "explanation": "TNG Digital has partnered with Kakitangan.com to enable salary payments directly into employees\u2019 TNG eWallet."
-    },
-    {
-        "question": "What is AEON Credit Service's ownership stake in AEON Bank?",
-        "options": [
-            "25 percent",
-            "50 percent",
-            "75 percent",
-            "100 percent"
-        ],
-        "correct": 1,
-        "explanation": "AEON Bank is AEON Credit Service's 50 percent-owned digital bank."
-    },
-    {
-        "question": "How long did it take for Moomoo Securities Malaysia to surpass one million registered users?",
-        "options": [
-            "Less than six months",
-            "Just over a year",
-            "Approximately two years",
-            "Over three years"
-        ],
-        "correct": 1,
-        "explanation": "Moomoo Securities Malaysia reached one million registered users just over a year after entering the market."
-    },
-    {
-        "question": "What initiative has the Monetary Authority of Singapore (MAS) launched to help financial institutions adopt AI?",
-        "options": [
-            "A new regulatory framework",
-            "A grant program for AI startups",
-            "A Pathfinder initiative",
-            "A mandatory AI certification course"
+            "To launch a new digital marketing campaign.",
+            "To manage its social media presence.",
+            "To support credit risk assessments and personalised loan approvals.",
+            "To develop a new mobile banking app from scratch."
         ],
         "correct": 2,
-        "explanation": "MAS has launched Pathfinder to help financial institutions adopt AI."
+        "explanation": "The headline article states that Ryt Bank will use Provenir's AI decisioning platform to support credit risk assessments, personalised loan approvals, and automated compliance."
     },
     {
-        "question": "When is Tan Teck Long officially set to succeed Helen Wong as OCBC Group CEO?",
+        "question": "Which two countries' properties can Malaysian investors now finance through a new RHB housing loan?",
         "options": [
-            "1 July 2025",
-            "1 January 2026",
-            "1 July 2026",
-            "1 January 2027"
+            "USA and Canada",
+            "China and Japan",
+            "Singapore and Thailand",
+            "UK and Australia"
+        ],
+        "correct": 3,
+        "explanation": "RHB Banking Group has introduced a new housing loan for Malaysian investors to finance properties in the UK and Australia."
+    },
+    {
+        "question": "What new Gen AI-powered platform did DBS launch to provide career coaching to its employees?",
+        "options": [
+            "CareerGPT",
+            "iCoach",
+            "CoachBot",
+            "DBS Mentor"
         ],
         "correct": 1,
-        "explanation": "Tan Teck Long will succeed Helen Wong as OCBC Group CEO, effective 1 January 2026."
+        "explanation": "DBS has launched a new Gen AI-powered coaching platform called iCoach, developed in collaboration with executive coach Marshall Goldsmith."
+    },
+    {
+        "question": "Which company did Accenture acquire to strengthen its banking services in Malaysia?",
+        "options": [
+            "CapBay",
+            "Olea",
+            "Aristal",
+            "Provenir"
+        ],
+        "correct": 2,
+        "explanation": "Accenture has acquired Aristal, a Malaysian consulting and digital transformation firm, to strengthen its services for the financial sector."
+    },
+    {
+        "question": "According to a Mastercard study, how does Malaysia's digital payment adoption compare to Western regions?",
+        "options": [
+            "It is significantly behind.",
+            "It is at the same level.",
+            "It is outpacing North America and Europe.",
+            "The study did not make a comparison."
+        ],
+        "correct": 2,
+        "explanation": "A Mastercard study found that Malaysia is outpacing North America and Europe in the adoption of digital payments, with nearly all consumers using them."
     }
 ];
